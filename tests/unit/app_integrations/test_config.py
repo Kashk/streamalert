@@ -22,18 +22,13 @@ from app_integrations.exceptions import AppIntegrationConfigError
 from tests.unit.app_integrations import FUNCTION_NAME
 from tests.unit.app_integrations.test_helpers import (
     get_mock_context,
-    MockSSMClient,
-    put_mock_params
+    MockSSMClient
 )
 
 
-@patch.object(AppConfig, 'SSM_CLIENT', MockSSMClient)
+@patch.object(AppConfig, 'SSM_CLIENT', MockSSMClient(True))
 class TestAppIntegrationConfig(object):
     """Test class for AppIntegrationConfig"""
-
-    def setup(self):
-        """Setup before each method"""
-        put_mock_params()
 
     def test_parse_context(self):
         """AppIntegrationConfig - Parse Context"""
@@ -76,5 +71,5 @@ class TestAppIntegrationConfig(object):
     def test_get_param_bad_value(self):
         """AppIntegrationConfig - Get parameter, bad json value"""
         config_name = '{}_config'.format(FUNCTION_NAME)
-        MockSSMClient._PARAMETERS[config_name] = 'bad json string'
-        AppConfig._get_parameters([config_name])
+        with patch.dict(AppConfig.SSM_CLIENT._parameters, {config_name: 'bad json'}):
+            AppConfig._get_parameters([config_name])

@@ -63,7 +63,7 @@ def test_get_app_exception_invalid():
 # Patch the required_auth_keys method with values that a subclass _would_ return
 TEST_AUTH_KEYS = {'api_hostname', 'integration_key', 'secret_key'}
 
-@patch.object(AppConfig, 'SSM_CLIENT', MockSSMClient)
+@patch.object(AppConfig, 'SSM_CLIENT', MockSSMClient(True))
 @patch.object(AppIntegration, 'type', Mock(return_value='type'))
 @patch.object(AppIntegration, 'required_auth_keys', Mock(return_value=TEST_AUTH_KEYS))
 @patch.object(Batcher, 'LAMBDA_CLIENT', MockLambdaClient)
